@@ -1,4 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { userAPI } from '../services/api';
+
+// Firebase 타입 선언
+declare global {
+  interface Window {
+    firebase: any;
+  }
+}
 
 interface User {
   id: number;
@@ -6,6 +14,7 @@ interface User {
   email: string;
   role?: string;
   provider?: string;
+  fcmToken?: string;
 }
 
 interface AuthContextType {
@@ -17,6 +26,7 @@ interface AuthContextType {
   registerWithGoogle: (credential: string) => Promise<void>;
   logout: () => void;
   fetchCurrentUser: () => Promise<void>;
+  updateFCMToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,6 +75,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('AuthContext: User data received:', data);
         setUser(data.data);
         console.log('AuthContext: User state updated:', data.data);
+        
+        // 사용자 정보 가져온 후 FCM 토큰 업데이트 시도
+        await updateFCMTokenIfAvailable();
       } else {
         console.log('AuthContext: Failed to fetch user, removing token');
         localStorage.removeItem("token");
@@ -98,6 +111,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem("token", token);
         console.log('AuthContext: Fetching current user...');
         await fetchCurrentUser();
+        
+        // FCM 토큰 업데이트 시도
+        await updateFCMTokenIfAvailable();
+        
         console.log('AuthContext: Login process completed successfully');
       } else {
         throw new Error(data.message || "로그인 실패");
@@ -108,6 +125,63 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // FCM 토큰 업데이트 함수
+  const updateFCMTokenIfAvailable = async () => {
+    try {
+      console.log('AuthContext: Starting FCM token update...');
+      console.log('AuthContext: ServiceWorker support:', 'serviceWorker' in navigator);
+      console.log('AuthContext: PushManager support:', 'PushManager' in window);
+      console.log('AuthContext: Notification permission:', Notification.permission);
+      
+      // 브라우저가 FCM을 지원하는지 확인
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+        // Firebase Messaging이 초기화되어 있는지 확인
+        if (window.firebase && window.firebase.messaging) {
+          console.log('AuthContext: Firebase messaging available');
+          const messaging = window.firebase.messaging();
+          
+          // 알림 권한 확인
+          if (Notification.permission === 'granted') {
+            console.log('AuthContext: Notification permission granted, getting FCM token...');
+            try {
+              // FCM 토큰 가져오기
+              const fcmToken = await messaging.getToken();
+              console.log('AuthContext: FCM token received:', fcmToken ? fcmToken.substring(0, 20) + '...' : 'null');
+              
+              if (fcmToken) {
+                console.log('AuthContext: FCM token received, updating backend');
+                // 백엔드로 FCM 토큰 전송
+                const response = await userAPI.updateFCMToken(fcmToken);
+                console.log('AuthContext: Backend response:', response.data);
+                console.log('AuthContext: FCM token updated successfully');
+              } else {
+                console.log('AuthContext: FCM token is null or empty');
+              }
+            } catch (fcmError) {
+              console.error('AuthContext: Failed to get FCM token:', fcmError);
+            }
+          } else {
+            console.log('AuthContext: Notification permission not granted:', Notification.permission);
+          }
+        } else {
+          console.log('AuthContext: Firebase messaging not available');
+          console.log('AuthContext: window.firebase:', !!window.firebase);
+          console.log('AuthContext: window.firebase.messaging:', !!(window.firebase && window.firebase.messaging));
+        }
+      } else {
+        console.log('AuthContext: FCM not supported in this browser');
+      }
+    } catch (error) {
+      console.error('AuthContext: FCM token update failed:', error);
+    }
+  };
+
+  // 수동으로 FCM 토큰 업데이트하는 함수
+  const updateFCMToken = async () => {
+    console.log('AuthContext: Manual FCM token update requested');
+    await updateFCMTokenIfAvailable();
   };
 
   const loginWithGoogle = async (credential: string) => {
@@ -201,6 +275,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     registerWithGoogle,
     logout,
     fetchCurrentUser,
+    updateFCMToken,
   };
 
   return (

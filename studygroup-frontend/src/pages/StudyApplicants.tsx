@@ -41,7 +41,7 @@ const StudyApplicants: React.FC = () => {
   );
 
   const acceptMutation = useMutation(
-    (applicationId: number) => postAPI.acceptApplicant(applicationId),
+    (applicationId: number) => postAPI.acceptApplication(applicationId),
     {
       onSuccess: () => {
         message.success('지원자를 승인했습니다!');
@@ -55,7 +55,7 @@ const StudyApplicants: React.FC = () => {
   );
 
   const declineMutation = useMutation(
-    (applicationId: number) => postAPI.declineApplicant(applicationId),
+    (applicationId: number) => postAPI.declineApplication(applicationId),
     {
       onSuccess: () => {
         message.success('지원을 거절했습니다.');

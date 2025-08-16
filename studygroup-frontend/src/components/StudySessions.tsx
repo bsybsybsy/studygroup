@@ -294,16 +294,60 @@ const StudySessions: React.FC = () => {
 
   // 현재 사용자의 스터디 역할 확인
   const getUserRole = () => {
-    if (!post || !user) return null;
+    if (!post || !user) {
+      console.log('🔍 getUserRole - post 또는 user가 없음:', { post: !!post, user: !!user });
+      return null;
+    }
     
-    const membership = post.studyMembers?.find(member => member.user && typeof member.user.id === 'number' && user && typeof user.id === 'number' && member.user.id === user.id);
+    // post.members와 post.studyMembers 모두 확인
+    console.log('🔍 getUserRole - post.members:', post.members);
+    console.log('🔍 getUserRole - post.studyMembers:', post.studyMembers);
+    console.log('🔍 getUserRole - current user:', user);
+    console.log('🔍 getUserRole - user.id:', user.id, 'type:', typeof user.id);
+    
+    // 먼저 post.members에서 찾기 (백엔드에서 실제로 반환하는 필드)
+    let membership = post.members?.find(member => {
+      console.log('🔍 getUserRole - checking member in post.members:', member);
+      console.log('🔍 getUserRole - member.user:', member.user);
+      console.log('🔍 getUserRole - member.user.id:', member.user?.id, 'type:', typeof member.user?.id);
+      console.log('🔍 getUserRole - comparing:', member.user?.id, '===', user.id, 'result:', member.user?.id === user.id);
+      
+      return member.user && typeof member.user.id === 'number' && user && typeof user.id === 'number' && member.user.id === user.id;
+    });
+    
+    // post.members에서 못 찾았다면 post.studyMembers에서 찾기
+    if (!membership && post.studyMembers) {
+      membership = post.studyMembers?.find(member => {
+        console.log('🔍 getUserRole - checking member in post.studyMembers:', member);
+        console.log('🔍 getUserRole - member.user:', member.user);
+        console.log('🔍 getUserRole - member.user.id:', member.user?.id, 'type:', typeof member.user?.id);
+        console.log('🔍 getUserRole - comparing:', member.user?.id, '===', user.id, 'result:', member.user?.id === user.id);
+        
+        return member.user && typeof member.user.id === 'number' && user && typeof user.id === 'number' && member.user.id === user.id;
+      });
+    }
+    
+    console.log('🔍 getUserRole - found membership:', membership);
+    console.log('🔍 getUserRole - membership.role:', membership?.role);
+    
     return membership?.role || null;
   };
 
   // 사용자가 Leader인지 확인
   const isUserLeader = () => {
     const role = getUserRole();
-    return role && typeof role === 'string' && role === 'LEADER';
+    const isAuthor = post?.author?.id === user?.id;
+    
+    console.log('🔍 isUserLeader - role:', role);
+    console.log('🔍 isUserLeader - isAuthor:', isAuthor);
+    console.log('🔍 isUserLeader - post.author.id:', post?.author?.id);
+    console.log('🔍 isUserLeader - user.id:', user?.id);
+    
+    // 스터디 작성자이거나 멤버로서 leader 역할을 가진 경우
+    const isLeader = (role && typeof role === 'string' && role === 'LEADER') || isAuthor;
+    console.log('🔍 isUserLeader - final result:', isLeader);
+    
+    return isLeader;
   };
 
   // 기존 출석 상태를 확인하는 함수
@@ -351,6 +395,31 @@ const StudySessions: React.FC = () => {
       console.log('🔍 fetchPostDetails - postData:', postData);
       console.log('🔍 fetchPostDetails - studyStatus:', postData?.studyStatus);
       console.log('🔍 fetchPostDetails - studyMembers:', postData?.studyMembers);
+      console.log('🔍 fetchPostDetails - members:', postData?.members); // members 필드도 확인
+      console.log('🔍 fetchPostDetails - studyMembers type:', typeof postData?.studyMembers);
+      console.log('🔍 fetchPostDetails - members type:', typeof postData?.members); // members 타입도 확인
+      console.log('🔍 fetchPostDetails - studyMembers isArray:', Array.isArray(postData?.studyMembers));
+      console.log('🔍 fetchPostDetails - members isArray:', Array.isArray(postData?.members)); // members 배열 여부도 확인
+      console.log('🔍 fetchPostDetails - studyMembers length:', postData?.studyMembers?.length);
+      console.log('🔍 fetchPostDetails - members length:', postData?.members?.length); // members 길이도 확인
+      
+      if (postData?.studyMembers) {
+        console.log('🔍 fetchPostDetails - studyMembers 상세 구조:');
+        postData.studyMembers.forEach((member: any, index: number) => {
+          console.log(`🔍 fetchPostDetails - member[${index}]:`, member);
+          console.log(`🔍 fetchPostDetails - member[${index}].user:`, member.user);
+          console.log(`🔍 fetchPostDetails - member[${index}].role:`, member.role);
+        });
+      }
+      
+      if (postData?.members) {
+        console.log('🔍 fetchPostDetails - members 상세 구조:');
+        postData.members.forEach((member: any, index: number) => {
+          console.log(`🔍 fetchPostDetails - members[${index}]:`, member);
+          console.log(`🔍 fetchPostDetails - members[${index}].user:`, member.user);
+          console.log(`🔍 fetchPostDetails - members[${index}].role:`, member.role);
+        });
+      }
       
       setPost(postData);
       
@@ -1171,7 +1240,7 @@ const StudySessions: React.FC = () => {
             <p className="text-gray-600 mt-2">{post && typeof post.title === 'string' ? post.title : '제목 없음'}</p>
             {/* 현재 사용자의 역할 표시 */}
             <p className="text-sm text-gray-500 mt-1">
-              역할: {(getUserRole() && typeof getUserRole() === 'string' && getUserRole() === 'LEADER') ? '👑 리더' : '👤 멤버'}
+              역할: {isUserLeader() ? '👑 리더' : '👤 멤버'}
             </p>
           </div>
           {/* Leader만 새 세션 추가 버튼 표시 */}

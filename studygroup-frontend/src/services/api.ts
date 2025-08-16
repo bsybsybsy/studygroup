@@ -312,14 +312,13 @@ export const firebaseAPI = {
 
 // 사용자 관련 API
 export const userAPI = {
+  // 현재 사용자 정보 조회
   getCurrentUser: (): Promise<AxiosResponse<ApiResponse<User>>> =>
     api.get('/user/me'),
-  
-  updateUser: (data: any): Promise<AxiosResponse<ApiResponse<User>>> =>
-    api.patch('/user', data),
-  
-  updateFcmToken: (token: string): Promise<AxiosResponse<ApiResponse<User>>> =>
-    api.patch('/user/fcm-token', { fcmToken: token }),
+
+  // FCM 토큰 업데이트
+  updateFCMToken: (fcmToken: string): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post('/user/fcm-token', { fcmToken }),
 };
 
 export default api; 

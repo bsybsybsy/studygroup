@@ -49,6 +49,7 @@ export interface Post {
   updatedAt: string;
   studySessions?: StudySession[];
   studyMembers?: StudyMember[];
+  members?: StudyMember[]; // 백엔드에서 실제로 반환하는 필드
   comments?: Comment[];
 }
 
