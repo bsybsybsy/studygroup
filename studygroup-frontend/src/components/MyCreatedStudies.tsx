@@ -124,6 +124,17 @@ const MyCreatedStudies: React.FC = () => {
       console.log(`🔍 Current user:`, user);
       console.log(`🔍 Study ID: ${studyId}`);
       
+      // 현재 스터디의 상태 확인
+      const currentStudy = studies.find(study => study.id === studyId);
+      const isAlreadyOngoing = currentStudy?.studyStatus === 'in-process' || 
+                               (currentStudy?.members && currentStudy.members.some((member: any) => member.studystatus === 'ongoing'));
+      
+      console.log('🔍 Study status check:', {
+        studyStatus: currentStudy?.studyStatus,
+        isAlreadyOngoing,
+        members: currentStudy?.members
+      });
+      
       const response = await postAPI.startStudy(studyId);
       console.log('스터디 시작 성공:', response.data);
       console.log('스터디 시작 응답 전체:', response);
@@ -132,8 +143,12 @@ const MyCreatedStudies: React.FC = () => {
       console.log('🔄 Refreshing data...');
       await fetchMyCreatedStudies();
       
-      // 성공 메시지 표시
-      alert('스터디가 시작되었습니다! 멤버들에게 초대장이 전송되었습니다.');
+      // 상태에 따라 다른 메시지 표시
+      if (isAlreadyOngoing) {
+        alert('스터디 세션 관리 페이지로 이동합니다.');
+      } else {
+        alert('스터디가 시작되었습니다! 멤버들에게 초대장이 전송되었습니다.');
+      }
       
       // 스터디 세션 관리 페이지로 이동
       console.log(`📍 Navigating to study sessions: /studies/${studyId}/sessions`);
@@ -239,12 +254,17 @@ const MyCreatedStudies: React.FC = () => {
                       지원자 관리
                     </button>
                     
-                    {study.studyStatus === 'in-process' && (
+                    {(study.studyStatus === 'in-process' || 
+                      (study.members && study.members.some((member: any) => member.studystatus === 'ongoing'))) && (
                       <button
                         onClick={() => handleStartStudy(study.id)}
                         className="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
                       >
-                        스터디 시작
+                        {study.studyStatus === 'in-process' || 
+                         (study.members && study.members.some((member: any) => member.studystatus === 'ongoing'))
+                          ? '스터디 들어가기' // 스터디 진행중일 때
+                          : '스터디 시작' // 스터디 시작 전일 때
+                        }
                       </button>
                     )}
                   </div>

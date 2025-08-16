@@ -208,16 +208,25 @@ const StudyDetail: React.FC = () => {
 
         {/* 액션 버튼들 */}
         <div className="flex flex-wrap gap-4 justify-center mb-6">
-          {/* 스터디 시작 버튼 (작성자만) */}
+          {/* 스터디 시작/들어가기 버튼 (작성자만) */}
           {post.author?.id === user?.id && (
             <button
               onClick={() => navigate(`/studies/${post.id}/sessions`)}
-              className="inline-flex items-center px-6 py-3 text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              className={`inline-flex items-center px-6 py-3 text-base font-medium rounded-md transition-colors ${
+                post.studyStatus === 'in-process' || 
+                (post.members && post.members.some((member: any) => member.studystatus === 'ongoing'))
+                  ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' // 스터디 진행중일 때 파란색
+                  : 'bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500' // 스터디 시작 전일 때 초록색
+              }`}
             >
               <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              스터디 시작
+              {post.studyStatus === 'in-process' || 
+               (post.members && post.members.some((member: any) => member.studystatus === 'ongoing'))
+                ? '스터디 들어가기' // 스터디 진행중일 때
+                : '스터디 시작' // 스터디 시작 전일 때
+              }
             </button>
           )}
 
