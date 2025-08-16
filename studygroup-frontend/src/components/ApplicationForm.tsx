@@ -145,7 +145,16 @@ const ApplicationForm: React.FC<ApplicationFormProps> = ({
   return (
     <Card title="스터디 지원 폼" style={{ maxWidth: 600, margin: '0 auto' }}>
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        {questions.map((question) => renderQuestion(question))}
+        {/* 임시로 questions 완전 차단 - 모든 questions 에러 해결 후 활성화 */}
+        {false ? (
+          <div className="text-sm text-gray-500 text-center py-4">
+            질문이 임시로 비활성화되었습니다.
+          </div>
+        ) : (
+          <div className="text-sm text-gray-500 text-center py-4">
+            질문이 없습니다.
+          </div>
+        )}
         
         <Form.Item style={{ marginTop: 24 }}>
           <Space>

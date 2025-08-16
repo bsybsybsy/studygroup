@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PlusIcon, TrashIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
+import { RequestForm } from '../types';
 
 export enum QuestionType {
   SHORT_ANSWER = 'short_answer',
@@ -18,10 +19,10 @@ export interface Question {
 }
 
 interface RequestFormBuilderProps {
-  onSave: (formData: { title: string; questions: Question[] }) => void;
+  onSave: (formData: RequestForm) => void;
   onCancel: () => void;
   loading?: boolean;
-  initialData?: { title: string; questions: Question[] };
+  initialData?: RequestForm;
 }
 
 const RequestFormBuilder: React.FC<RequestFormBuilderProps> = ({
@@ -136,7 +137,7 @@ const RequestFormBuilder: React.FC<RequestFormBuilderProps> = ({
       return;
     }
 
-    onSave({ title, questions });
+    onSave({ title, questions } as RequestForm);
   };
 
   const getQuestionTypeLabel = (type: QuestionType) => {
@@ -386,3 +387,4 @@ const RequestFormBuilder: React.FC<RequestFormBuilderProps> = ({
 };
 
 export default RequestFormBuilder;
+

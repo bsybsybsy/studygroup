@@ -11,6 +11,24 @@ export interface User {
   updatedAt: string;
 }
 
+// RequestForm 관련 타입
+export interface RequestFormQuestion {
+  questionText: string;
+  type: string;
+  isRequired: boolean;
+  order: number;
+  options?: string[];
+}
+
+export interface RequestForm {
+  id?: number;
+  postId?: number;
+  title: string;
+  questions: RequestFormQuestion[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // 스터디 포스트 관련 타입
 export interface Post {
   id: number;
@@ -26,6 +44,7 @@ export interface Post {
   studyEndDate?: string;
   studyStatus?: string;
   applicationFormTemplate?: any[];
+  requestForm?: RequestForm; // requestForm 필드 추가
   createdAt: string;
   updatedAt: string;
   studySessions?: StudySession[];
@@ -134,6 +153,25 @@ export interface StudyApplication {
   answers: Record<string, any>;
   isAccepted: boolean;
   appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 세션 목표 관련 타입
+export interface SessionGoals {
+  id: number;
+  session: StudySession;
+  user: User;
+  goalofToday?: string;
+  proofofToday?: {
+    type: 'text' | 'link' | 'image' | 'file';
+    content: string;
+    url?: string;
+    fileName?: string;
+    fileSize?: number;
+    mimeType?: string;
+    serverFileName?: string; // 실제 서버 파일명
+  }[];
   createdAt: string;
   updatedAt: string;
 } 

@@ -101,6 +101,10 @@ export const postAPI = {
   getMyStudies: (): Promise<AxiosResponse<ApiResponse<Post[]>>> =>
     api.get('/post/my-studies'),
   
+  // 내가 참여하는 스터디 목록 (멤버/리더)
+  getMyMemberStudies: (): Promise<AxiosResponse<ApiResponse<any[]>>> =>
+    api.get('/post/member-studies'),
+  
   // 내가 지원한 스터디 목록
   getMyApplications: (): Promise<AxiosResponse<ApiResponse<any[]>>> =>
     api.get('/post/applications'),
@@ -109,15 +113,73 @@ export const postAPI = {
   applyToStudy: (postId: number, answers?: any): Promise<AxiosResponse<ApiResponse<any>>> =>
     api.post(`/post/${postId}/apply`, { answers }),
 
-  // 지원자 관리 관련 API
+    // 지원자 관리 관련 API
   getStudyApplications: (postId: number): Promise<AxiosResponse<ApiResponse<any[]>>> =>
     api.get(`/post/${postId}/applications`),
-  
+
   acceptApplication: (applicationId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
     api.post(`/post/applications/${applicationId}/accept`),
-  
+
   declineApplication: (applicationId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
     api.post(`/post/applications/${applicationId}/decline`),
+
+  // 스터디 시작 API
+  startStudy: (postId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/${postId}/start-study`),
+
+  // 스터디 세션 관련 API
+  createStudySession: (postId: number, data: any): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/${postId}/sessions`, data),
+
+  getStudySessions: (postId: number): Promise<AxiosResponse<ApiResponse<any[]>>> =>
+    api.get(`/post/${postId}/sessions`),
+
+  updateStudySession: (sessionId: number, data: any): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.patch(`/post/sessions/${sessionId}`, data),
+
+  deleteStudySession: (sessionId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.delete(`/post/sessions/${sessionId}`),
+
+  // 세션의 오늘의 목표와 한일 생성/업데이트
+  createOrUpdateSessionGoals: (sessionId: number, data: { 
+    goalofToday?: string; 
+    proofofToday?: {
+      type: 'text' | 'link' | 'image' | 'file';
+      content: string;
+      url?: string;
+      fileName?: string;
+      fileSize?: number;
+      mimeType?: string;
+    }[]
+  } | FormData): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/sessions/${sessionId}/goals`, data),
+
+  // 기존 목표와 한일 수정 (전용 함수)
+  updateExistingSessionGoals: (sessionId: number, userId: number, data: { 
+    goalofToday?: string; 
+    proofofToday?: {
+      type: 'text' | 'link' | 'image' | 'file';
+      content: string;
+      url?: string;
+      fileName?: string;
+      fileSize?: number;
+      mimeType?: string;
+    }[]
+  } | FormData): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.patch(`/post/sessions/${sessionId}/goals/${userId}`, data, {
+      headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : { 'Content-Type': 'application/json' }
+    }),
+
+  // 세션의 모든 멤버 목표와 한일 조회
+  getSessionGoals: (sessionId: number): Promise<AxiosResponse<ApiResponse<any[]>>> =>
+    api.get(`/post/sessions/${sessionId}/goals`),
+
+  // 세션 출석 체크
+  updateAttendance: (sessionId: number, data: { isPresent: boolean; proof_text?: string }): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/sessions/${sessionId}/attendance`, data),
+  
+  getAttendanceStatus: (sessionId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.get(`/post/sessions/${sessionId}/attendance/status`),
 
   // RequestForm 관련 API
   // 지원 양식 생성
@@ -133,6 +195,23 @@ export const postAPI = {
     }>;
   }): Promise<AxiosResponse<ApiResponse<any>>> =>
     api.post('/requestform', data),
+
+  // 스터디 초대 관련 API
+  createInvite: (postId: number, userId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/invites/${postId}`, { inviteeId: userId }),
+
+  acceptInvite: (token: string): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/invites/${token}/accept`),
+
+  getMyInvites: (): Promise<AxiosResponse<ApiResponse<any[]>>> =>
+    api.get('/post/invites/my'),
+
+  declineInvite: (inviteId: number): Promise<AxiosResponse<ApiResponse<any>>> =>
+    api.post(`/post/invites/${inviteId}/decline`),
+
+  // 내가 수락한 초대 목록 (accepted 상태)
+  getMyAcceptedInvites: (): Promise<AxiosResponse<ApiResponse<any[]>>> =>
+    api.get('/post/invites/my/accepted'),
 
   // 지원 양식 조회
   getRequestForm: (postId: number): Promise<AxiosResponse<ApiResponse<any>>> =>

@@ -17,6 +17,11 @@ import Header from "./components/Layout/Header";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import RequestFormBuilder from "./components/RequestFormBuilder";
 import { postAPI } from "./services/api";
+import StudySessions from "./components/StudySessions";
+import MyInvites from "./components/MyInvites";
+import MyParticipatingStudies from "./components/MyStudies";
+import MyCreatedStudies from "./components/MyCreatedStudies";
+import { RequestForm } from "./types";
 
 // Google OAuth 타입 정의
 declare global {
@@ -55,6 +60,9 @@ interface StudySession {
   mode: string;
   location?: string;
   isClosed: boolean;
+  members?: StudyMember[];
+  role?: string; // 추가: 사용자의 역할 (leader/member)
+  joinedAt?: string; // 추가: 참여한 날짜
 }
 
 interface StudyApplication {
@@ -71,13 +79,14 @@ interface StudyApplication {
   };
   answers: any;
   isAccepted: boolean;
+  isRejected: boolean;
   appliedAt: string;
 }
 
 interface StudyMember {
   id: number;
   userId: number;
-  studySessionId: number;
+  postId: number;
   role: string;
   joinedAt: string;
   user: User;
@@ -85,7 +94,7 @@ interface StudyMember {
 
 const queryClient = new QueryClient();
 
-// ApplicationForm 컴포넌트
+// ApplicationForm 컴포넌트 - 임시로 완전 차단
 const ApplicationForm = ({
   questions,
   onSubmit,
@@ -97,98 +106,14 @@ const ApplicationForm = ({
   onCancel: () => void;
   loading?: boolean;
 }) => {
-  if (!questions || questions.length === 0) {
-    return <div>질문이 없습니다.</div>;
-  }
-
-  const handleSubmit = async (values: any) => {
-    try {
-      onSubmit(values);
-    } catch (error) {
-      console.error("Form submission error:", error);
-      toast.error("폼 제출 중 오류가 발생했습니다.");
-    }
-  };
-
+  // 임시로 완전 차단
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">스터디 지원서</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target as HTMLFormElement);
-            const values: any = {};
-            formData.forEach((value, key) => {
-              values[key] = value;
-            });
-            handleSubmit(values);
-          }}
-        >
-          {questions.map((question, index) => (
-            <div key={index} className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {question.questionText || question.question}
-                {question.required && <span className="text-red-500"> *</span>}
-              </label>
-
-              {(question.type === "text" ||
-                question.type === "short_answer") && (
-                <input
-                  type="text"
-                  name={`question_${index}`}
-                  required={question.required}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="답변을 입력하세요"
-                />
-              )}
-
-              {question.type === "textarea" && (
-                <textarea
-                  name={`question_${index}`}
-                  required={question.required}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="답변을 입력하세요"
-                />
-              )}
-
-              {question.type === "radio" && question.options && (
-                <div className="space-y-2">
-                  {question.options.map((option: string, optionIndex: number) => (
-                    <label key={optionIndex} className="flex items-center">
-                      <input
-                        type="radio"
-                        name={`question_${index}`}
-                        value={option}
-                        required={question.required}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              )}
-
-              {question.type === "checkbox" && question.options && (
-                <div className="space-y-2">
-                  {question.options.map((option: string, optionIndex: number) => (
-                    <label key={optionIndex} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name={`question_${index}`}
-                        value={option}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-
-          <div className="flex justify-end space-x-3 mt-6">
+        <div className="text-center py-8">
+          <p className="text-gray-500 mb-4">임시로 비활성화되었습니다.</p>
+          <div className="flex justify-end space-x-3">
             <button
               type="button"
               onClick={onCancel}
@@ -196,15 +121,8 @@ const ApplicationForm = ({
             >
               취소
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {loading ? "처리 중..." : "지원하기"}
-            </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
@@ -622,14 +540,14 @@ const UserProfile = () => {
             <div className="flex items-center space-x-4 mb-6">
               <div className="h-16 w-16 bg-indigo-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xl font-bold">
-                  {user?.username?.charAt(0).toUpperCase()}
+                  {user && user.username && typeof user.username === 'string' ? user.username.charAt(0).toUpperCase() : 'U'}
                 </span>
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  {user?.username}
+                  {user && user.username && typeof user.username === 'string' ? user.username : '사용자명 없음'}
                 </h1>
-                <p className="text-gray-600">{user?.email}</p>
+                <p className="text-gray-600">{user && user.email && typeof user.email === 'string' ? user.email : '이메일 없음'}</p>
               </div>
             </div>
 
@@ -640,17 +558,17 @@ const UserProfile = () => {
                     사용자명
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {user?.username}
+                    {user && user.username && typeof user.username === 'string' ? user.username : '사용자명 없음'}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">이메일</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{user?.email}</dd>
+                  <dd className="mt-1 text-sm text-gray-900">{user && user.email && typeof user.email === 'string' ? user.email : '이메일 없음'}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">역할</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {user?.role || "일반 사용자"}
+                    {user && user.role && typeof user.role === 'string' ? user.role : "일반 사용자"}
                   </dd>
                 </div>
                 <div>
@@ -658,7 +576,7 @@ const UserProfile = () => {
                     가입 방식
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {user?.provider || "이메일"}
+                    {user && user.provider && typeof user.provider === 'string' ? user.provider : "이메일"}
                   </dd>
                 </div>
               </dl>
@@ -787,34 +705,35 @@ const StudyList = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {studies.map((study) => (
               <div
-                key={study.id}
+                key={study && study.id && typeof study.id === 'number' ? study.id : Math.random()}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => navigate(`/studies/${study.id}`)}
+                                  onClick={() => navigate(`/studies/${study && study.id && typeof study.id === 'number' ? study.id : 0}`)}
               >
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {study.title}
+                    {study && study.title && typeof study.title === 'string' ? study.title : '제목 없음'}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                    {study.description}
+                    {study && study.description && typeof study.description === 'string' ? study.description : '설명 없음'}
                   </p>
                   <div className="flex justify-between items-center text-sm text-gray-500">
-                    <span>작성자: {study.author?.username}</span>
-                    <span>{study.currentNumber}/{study.recruitNumber}명</span>
+                    <span>작성자: {study.author && study.author.username && typeof study.author.username === 'string' ? study.author.username : '작성자 없음'}</span>
+                    <span>{(study.currentNumber && typeof study.currentNumber === 'number' ? study.currentNumber : 0)}/{(study.recruitNumber && typeof study.recruitNumber === 'number' ? study.recruitNumber : 0)}명</span>
                   </div>
                   <div className="mt-4 flex justify-between items-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      study.studyStatus === 'recruiting' ? 'bg-green-100 text-green-800' :
-                      study.studyStatus === 'started' ? 'bg-blue-100 text-blue-800' :
-                      study.studyStatus === 'finished' ? 'bg-gray-100 text-gray-800' :
-                      'bg-yellow-100 text-yellow-800'
+                      (study.studyStatus && typeof study.studyStatus === 'string' && study.studyStatus === 'recruiting') ? 'bg-green-100 text-green-800' :
+                      (study.studyStatus && typeof study.studyStatus === 'string' && study.studyStatus === 'in-process') ? 'bg-yellow-100 text-yellow-800' :
+                      (study.studyStatus && typeof study.studyStatus === 'string' && study.studyStatus === 'over') ? 'bg-gray-100 text-gray-800' :
+                      'bg-gray-100 text-gray-800'
                     }`}>
-                      {study.studyStatus === 'recruiting' ? '모집중' :
-                       study.studyStatus === 'started' ? '진행중' :
-                       study.studyStatus === 'finished' ? '완료' : '대기중'}
+                      {(study.studyStatus && typeof study.studyStatus === 'string' && study.studyStatus === 'recruiting') ? '모집중' :
+                       (study.studyStatus && typeof study.studyStatus === 'string' && study.studyStatus === 'in-process') ? '모집완료' :
+                       (study.studyStatus && typeof study.studyStatus === 'string' && study.studyStatus === 'over') ? '종료' : 
+                       (study.studyStatus && typeof study.studyStatus === 'string') ? `상태: ${study.studyStatus}` : '상태 미정'}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {new Date(study.createdAt).toLocaleDateString()}
+                      {study.createdAt && typeof study.createdAt === 'string' ? new Date(study.createdAt).toLocaleDateString() : '날짜 없음'}
                     </span>
                   </div>
                 </div>
@@ -831,16 +750,7 @@ const CreateStudy = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showRequestFormBuilder, setShowRequestFormBuilder] = useState(false);
-  const [requestFormData, setRequestFormData] = useState<{
-    title: string;
-    questions: Array<{
-      questionText: string;
-      type: string;
-      isRequired: boolean;
-      order: number;
-      options?: string[];
-    }>;
-  } | null>(null);
+  const [requestFormData, setRequestFormData] = useState<RequestForm | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -856,40 +766,22 @@ const CreateStudy = () => {
     setLoading(true);
 
     try {
-      // 1. 먼저 스터디를 생성
-      const postResponse = await postAPI.createPost(formData);
+      // requestForm을 포함하여 스터디를 한 번에 생성
+      const postData = {
+        ...formData,
+        requestForm: requestFormData // requestForm을 post 데이터에 포함
+      };
+
+      console.log('🔍 전송할 post 데이터:', postData);
+      
+      const postResponse = await postAPI.createPost(postData);
 
       if (postResponse.data?.data?.id) {
-        const postId = postResponse.data.data.id;
-
-        // 2. 지원 양식이 있다면 생성
-        if (requestFormData && postId) {
-          try {
-            const formResponse = await postAPI.createRequestForm({
-              postId: postId,
-              title: requestFormData.title,
-              questions: requestFormData.questions
-            });
-
-            if (formResponse.data?.data) {
-              toast.success("스터디와 지원 양식이 성공적으로 생성되었습니다!");
-            } else {
-              console.warn("스터디는 생성되었지만 지원 양식 생성에 실패했습니다.");
-              toast.success("스터디가 성공적으로 생성되었습니다!");
-            }
-          } catch (formError) {
-            console.warn("스터디는 생성되었지만 지원 양식 생성 중 오류가 발생했습니다:", formError);
-            toast.success("스터디가 성공적으로 생성되었습니다!");
-          }
-        } else {
-          toast.success("스터디가 성공적으로 생성되었습니다!");
-        }
+        toast.success("스터디가 성공적으로 생성되었습니다!");
+        navigate("/studies");
       } else {
         toast.error("스터디 생성에 실패했습니다.");
-        return;
       }
-
-      navigate("/studies");
     } catch (error) {
       console.error("Failed to create study:", error);
       toast.error("스터디 생성 중 오류가 발생했습니다.");
@@ -906,13 +798,7 @@ const CreateStudy = () => {
     }));
   };
 
-  const handleRequestFormSave = (formData: { title: string; questions: Array<{
-    questionText: string;
-    type: string;
-    isRequired: boolean;
-    order: number;
-    options?: string[];
-  }> }) => {
+  const handleRequestFormSave = (formData: RequestForm) => {
     setRequestFormData(formData);
     setShowRequestFormBuilder(false);
   };
@@ -1028,15 +914,15 @@ const CreateStudy = () => {
                   </button>
                 </div>
                 
-                {requestFormData && (
+                {false && requestFormData && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="text-sm font-medium text-blue-900">
-                          {requestFormData.title}
+                          임시로 비활성화됨
                         </h4>
                         <p className="text-sm text-blue-700 mt-1">
-                          {requestFormData.questions.length}개의 질문이 설정되었습니다
+                          질문 정보를 불러올 수 없습니다
                         </p>
                       </div>
                       <button
@@ -1090,197 +976,10 @@ const CreateStudy = () => {
   );
 };
 
-const MyStudies = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [myStudies, setMyStudies] = useState<StudySession[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      fetchMyStudies();
-    }
-  }, [user]);
 
-  const fetchMyStudies = async () => {
-    try {
-      const response = await postAPI.getMyStudies();
-      console.log("MyStudies API Response:", response.data); // Debug log
-      
-      // Handle different possible response structures
-      const responseData = response.data as any;
-      
-      if (Array.isArray(responseData)) {
-        setMyStudies(responseData);
-      } else if (responseData && Array.isArray(responseData.data)) {
-        setMyStudies(responseData.data);
-      } else if (responseData && responseData.data && Array.isArray(responseData.data.data)) {
-        // 중첩된 data 구조 처리
-        setMyStudies(responseData.data.data);
-      } else {
-        console.warn("Unexpected my studies response structure:", responseData);
-        setMyStudies([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch my studies:", error);
-      setMyStudies([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
 
-  return (
-    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div className="px-4 py-6 sm:px-0">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">내가 만든 스터디</h1>
-            <p className="text-gray-600 mt-2">내가 작성한 스터디 모집글들을 관리할 수 있습니다</p>
-          </div>
-          <button
-            onClick={() => navigate("/create-study")}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <span>새 스터디 만들기</span>
-          </button>
-        </div>
-
-        {!Array.isArray(myStudies) || myStudies.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">아직 만든 스터디가 없습니다</h3>
-            <p className="text-gray-500 mb-6">첫 번째 스터디를 만들어보세요!</p>
-            <div className="space-x-3">
-              <button
-                onClick={() => navigate("/create-study")}
-                className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors"
-              >
-                스터디 만들기
-              </button>
-              <button
-                onClick={() => navigate("/studies")}
-                className="bg-gray-100 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-200 transition-colors"
-              >
-                다른 스터디 둘러보기
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-500">
-                  총 {myStudies.length}개의 스터디
-                </span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs text-gray-400">상태별:</span>
-                  <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                    모집중 {myStudies.filter(s => s.studyStatus === 'recruiting').length}
-                  </span>
-                  <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                    진행중 {myStudies.filter(s => s.studyStatus === 'started').length}
-                  </span>
-                  <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
-                    완료 {myStudies.filter(s => s.studyStatus === 'finished').length}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {myStudies.map((study) => (
-                <div
-                  key={study.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200 border border-gray-200 hover:border-indigo-300"
-                >
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
-                        {study.title}
-                      </h3>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        study.studyStatus === 'recruiting' ? 'bg-green-100 text-green-800' :
-                        study.studyStatus === 'started' ? 'bg-blue-100 text-blue-800' :
-                        study.studyStatus === 'finished' ? 'bg-gray-100 text-gray-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {study.studyStatus === 'recruiting' ? '모집중' :
-                         study.studyStatus === 'started' ? '진행중' :
-                         study.studyStatus === 'finished' ? '완료' : '대기중'}
-                      </span>
-                    </div>
-                    
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {study.description}
-                    </p>
-                    
-                    <div className="space-y-3 mb-4">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">카테고리</span>
-                        <span className="font-medium text-gray-700">{study.category || '미지정'}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">모드</span>
-                        <span className="font-medium text-gray-700">{study.mode || '미지정'}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">모집 인원</span>
-                        <span className="font-medium text-gray-700">
-                          {study.currentNumber}/{study.recruitNumber}명
-                        </span>
-                      </div>
-                      {study.location && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">위치</span>
-                          <span className="font-medium text-gray-700">{study.location}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                      <span>작성일: {new Date(study.createdAt).toLocaleDateString()}</span>
-                      <span>수정일: {new Date(study.updatedAt).toLocaleDateString()}</span>
-                    </div>
-                    
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => navigate(`/studies/${study.id}`)}
-                        className="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm"
-                      >
-                        상세보기
-                      </button>
-                      <button
-                        onClick={() => navigate(`/studies/${study.id}/applications`)}
-                        className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
-                      >
-                        지원자 관리
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 const MyApplications = () => {
   const { user } = useAuth();
@@ -1364,38 +1063,38 @@ const MyApplications = () => {
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             <ul className="divide-y divide-gray-200">
               {applications.map((application) => (
-                <li key={application.id}>
+                <li key={application && application.id && typeof application.id === 'number' ? application.id : Math.random()}>
                   <div 
                     className="px-6 py-5 flex items-center justify-between hover:bg-blue-50 hover:border-l-4 hover:border-l-blue-500 cursor-pointer transition-all duration-200 group border-l-4 border-l-transparent"
-                    onClick={() => navigate(`/studies/${application.post.id}`)}
+                    onClick={() => navigate(`/studies/${application.post && application.post.id && typeof application.post.id === 'number' ? application.post.id : 0}`)}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-                            {application.post.title}
+                            {application.post && application.post.title && typeof application.post.title === 'string' ? application.post.title : '제목 없음'}
                           </p>
                           <p className="text-sm text-gray-500 line-clamp-2">
-                            {application.post.description}
+                            {application.post && application.post.description && typeof application.post.description === 'string' ? application.post.description : '설명 없음'}
                           </p>
                           <p className="text-xs text-gray-400">
-                            작성자: {application.post.author.username} | 
-                            모집인원: {application.post.currentNumber}/{application.post.recruitNumber}
+                            작성자: {application.post && application.post.author && application.post.author.username && typeof application.post.author.username === 'string' ? application.post.author.username : '작성자 없음'} | 
+                            모집인원: {(application.post && application.post.currentNumber && typeof application.post.currentNumber === 'number' ? application.post.currentNumber : 0)}/{(application.post && application.post.recruitNumber && typeof application.post.recruitNumber === 'number' ? application.post.recruitNumber : 0)}
                           </p>
                         </div>
                       </div>
                       <p className="text-sm text-gray-500 mt-2">
-                        지원일: {new Date(application.appliedAt).toLocaleDateString()}
+                        지원일: {application.appliedAt && typeof application.appliedAt === 'string' ? new Date(application.appliedAt).toLocaleDateString() : '날짜 없음'}
                       </p>
                     </div>
                     <div className="ml-4 flex-shrink-0 flex items-center space-x-2">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        application.isAccepted === true ? 'bg-green-100 text-green-800' :
-                        application.isAccepted === false ? 'bg-yellow-100 text-yellow-800' :
+                        (application.isAccepted === true) ? 'bg-green-100 text-green-800' :
+                        (application.isAccepted === false) ? 'bg-yellow-100 text-yellow-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
-                        {application.isAccepted === true ? '승인됨' :
-                         application.isAccepted === false ? '대기중' : '알 수 없음'}
+                        {(application.isAccepted === true) ? '승인됨' :
+                         (application.isAccepted === false) ? '대기중' : '알 수 없음'}
                       </span>
                       <div className="text-gray-400 group-hover:text-blue-500 transition-colors">
                         <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1456,14 +1155,16 @@ const StudyApplications = () => {
 
   const fetchPostDetails = async () => {
     try {
-      const response = await postAPI.getPost(parseInt(postId!));
-      const responseData = response.data as any;
+      // 임시로 post 객체 완전 차단
+      // const response = await postAPI.getPost(parseInt(postId!));
+      // const responseData = response.data as any;
       
-      if (responseData && responseData.data) {
-        setPost(responseData.data);
-      } else if (responseData) {
-        setPost(responseData);
-      }
+      // if (responseData && responseData.data) {
+      //   setPost(responseData.data);
+      // } else if (responseData) {
+      //   setPost(responseData);
+      // }
+      setPost({} as any);
     } catch (error) {
       console.error("Failed to fetch post details:", error);
     }
@@ -1488,9 +1189,14 @@ const StudyApplications = () => {
 
   const handleAcceptApplication = async (applicationId: number) => {
     try {
-      await postAPI.acceptApplication(applicationId);
+      console.log("🔍 Accepting application:", applicationId);
+      const response = await postAPI.acceptApplication(applicationId);
+      console.log("🔍 Accept response:", response);
       toast.success("지원자를 승인했습니다.");
-      fetchStudyApplications(); // 목록 새로고침
+      // 목록 새로고침
+      setTimeout(() => {
+        fetchStudyApplications();
+      }, 500);
     } catch (error) {
       console.error("Failed to accept application:", error);
       toast.error("지원자 승인에 실패했습니다.");
@@ -1499,9 +1205,14 @@ const StudyApplications = () => {
 
   const handleDeclineApplication = async (applicationId: number) => {
     try {
-      await postAPI.declineApplication(applicationId);
+      console.log("🔍 Declining application:", applicationId);
+      const response = await postAPI.declineApplication(applicationId);
+      console.log("🔍 Decline response:", response);
       toast.success("지원자를 거절했습니다.");
-      fetchStudyApplications(); // 목록 새로고침
+      // 목록 새로고침
+      setTimeout(() => {
+        fetchStudyApplications();
+      }, 500);
     } catch (error) {
       console.error("Failed to decline application:", error);
       toast.error("지원자 거절에 실패했습니다.");
@@ -1602,40 +1313,72 @@ const StudyApplications = () => {
                     <div className="flex items-center space-x-2">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                         application.isAccepted === true ? 'bg-green-100 text-green-800' :
-                        application.isAccepted === false ? 'bg-red-100 text-red-800' :
+                        application.isRejected === true ? 'bg-red-100 text-red-800' :
                         'bg-yellow-100 text-yellow-800'
                       }`}>
                         {application.isAccepted === true ? '승인됨' :
-                         application.isAccepted === false ? '거절됨' : '대기중'}
+                         application.isRejected === true ? '거절됨' : '대기중'}
+                      </span>
+                      {/* 디버깅 정보 */}
+                      <span className="text-xs text-gray-400">
+                        (ID: {application.id}, isAccepted: {String(application.isAccepted)}, isRejected: {String(application.isRejected)})
                       </span>
                     </div>
                   </div>
 
-                  {/* 지원서 답변 */}
-                  {requestForm && requestForm.questions && application.answers && (
+                  {/* 지원서 답변 - 임시로 차단 */}
+                  {false && requestForm && requestForm.questions && application.answers && (
                     <div className="border-t border-gray-200 pt-4 mb-4">
                       <h4 className="text-md font-medium text-gray-900 mb-3">지원서 답변</h4>
                       <div className="space-y-3">
-                        {requestForm.questions.map((question: any, index: number) => {
-                          const answer = application.answers[`question_${index}`] || application.answers[question.questionText] || '답변 없음';
-                          return (
-                            <div key={index} className="bg-gray-50 rounded-lg p-3">
-                              <p className="text-sm font-medium text-gray-700 mb-1">
-                                {question.questionText}
-                                {question.isRequired && <span className="text-red-500 ml-1">*</span>}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                {Array.isArray(answer) ? answer.join(', ') : answer}
-                              </p>
-                            </div>
-                          );
-                        })}
+                        {(() => {
+                          try {
+                            let questionsArray = requestForm.questions;
+                            
+                            // 객체인 경우 배열로 변환
+                            if (questionsArray && typeof questionsArray === 'object' && !Array.isArray(questionsArray)) {
+                              console.log('🔍 App - questions가 객체입니다. 배열로 변환합니다:', questionsArray);
+                              questionsArray = Object.values(questionsArray);
+                            }
+                            
+                            // 배열이고 길이가 0보다 큰 경우에만 표시
+                            if (Array.isArray(questionsArray) && questionsArray.length > 0) {
+                              return questionsArray.map((question: any, index: number) => {
+                                const answer = application.answers[`question_${index}`] || application.answers[question.questionText] || '답변 없음';
+                                return (
+                                  <div key={question.id || index} className="bg-gray-50 rounded-lg p-3">
+                                    <p className="text-sm font-medium text-gray-700 mb-1">
+                                      {question.questionText}
+                                      {question.isRequired && <span className="text-red-500 ml-1">*</span>}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      {Array.isArray(answer) ? answer.join(', ') : answer}
+                                    </p>
+                                  </div>
+                                );
+                              });
+                            } else {
+                              return (
+                                <div className="text-sm text-gray-500">
+                                  질문이 없습니다.
+                                </div>
+                              );
+                            }
+                          } catch (error) {
+                            console.error('🔍 App - questions 처리 중 에러:', error);
+                            return (
+                              <div className="text-sm text-red-500">
+                                질문 처리 중 오류가 발생했습니다.
+                              </div>
+                            );
+                          }
+                        })()}
                       </div>
                     </div>
                   )}
 
                   {/* 액션 버튼 */}
-                  {application.isAccepted === null && (
+                  {!application.isAccepted && !application.isRejected && (
                     <div className="flex space-x-3 pt-4 border-t border-gray-200">
                       <button
                         onClick={() => handleAcceptApplication(application.id)}
@@ -1653,7 +1396,7 @@ const StudyApplications = () => {
                   )}
 
                   {/* 이미 처리된 경우 상태 표시 */}
-                  {application.isAccepted !== null && (
+                  {(application.isAccepted || application.isRejected) && (
                     <div className="pt-4 border-t border-gray-200">
                       <p className="text-sm text-gray-600">
                         {application.isAccepted ? 
@@ -1751,6 +1494,14 @@ const App = () => {
                 }
               />
               <Route
+                path="/studies/:postId/sessions"
+                element={
+                  <ProtectedRoute>
+                    <StudySessions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/studies/:id/applicants"
                 element={
                   <ProtectedRoute>
@@ -1759,18 +1510,34 @@ const App = () => {
                 }
               />
               <Route
-                path="/my-studies"
-                element={
-                  <ProtectedRoute>
-                    <MyStudies />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
                 path="/my-applications"
                 element={
                   <ProtectedRoute>
                     <MyApplications />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-invites"
+                element={
+                  <ProtectedRoute>
+                    <MyInvites />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-studies"
+                element={
+                  <ProtectedRoute>
+                    <MyParticipatingStudies />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-created-studies"
+                element={
+                  <ProtectedRoute>
+                    <MyCreatedStudies />
                   </ProtectedRoute>
                 }
               />
