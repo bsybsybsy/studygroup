@@ -5,12 +5,152 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7422dbca-69f7-40ac-b77d-71e86d95a2e8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/04b7ce098a95a0afbafd45171b9f3b63eab68517be3cdfaa2263740c735abf2f.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/05768afc490ef7241d01cef218bcafd71ef23408301e68b12d4e966f387218fb.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/05fcb06b5a25f96b70e8661a901f7624788ddd36c30121f19eb32605e4db7626.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/066f6261978f7bd02111a5ac24ac12fbc3123a9e802de21c2bb21296571de879.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/114984737eb657b73348d3c886e31898a57ab595a0cbdd064ef71312267bae27.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/1672b8f9283798b5306258632caa38ae6efac8d7228680229e47f7bec6426c31.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/189ffce63e22a41156fdc5212d9e831840f0f5aeffe7bef8a1d31c8f8a7861bb.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/1fde02a426941a4e99c276425c76a7fa186e8179fe4cf90cb25321fd98273092.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/2517c511a2bea3c1d6eef286ca48919e5be67fc7e09460a2935aa4884e9f3978.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/251e7ba70d78ff13d74ff4911c3fce28711e5ee76786a996f9acc5bbe999d1a9.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/254760e47fd293d56fc484a44a1a0677a2d3018417c8bf449d3aad532788ea16.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/25a4e9ff2ab8c89b1b7bdf947a2faa674b6027e3e4cc36c6c5a851b82bfb5534.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/328a789a0a5f5917385034dc460bc3ded0c06e63910677de54aa4a5e825ff935.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/3dc5b43c8b1ab91da54b4b067428df328ee917b93dcf302b58bf9235c23c0438.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/40303f54ba9d1f198ec94a0153c68c4edf3f26657a02752d2393f1b48067022c.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/43a526b86e049c41d1fffc0b8f77015c2fbd02b47222666168b400600d911546.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/470d6c89dbe084ac9ba7f44bafaf890e0025943d6dccbfd3883bf87fbb482ec3.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/4793ce5f0ae753ce71a7839c8172e95cd09aee4a800f30b694acd5995a3ba6d7.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/4e5f682de1ef33084ef34d34db17afdb0b9e5da0fd67dda95098032a992e49c4.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/56606f4cc298d339ed219b8721bdbfb57b55fd0e757e77b8246214dbf4c20909.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/5a86b065accc1a2d2e4758d0d275bceb38282b74269968d5843e3284b01b831a.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/5b33d5bd9d7a824eae1912208df13741c138fe0f38672995471bcdff9c006522.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/5beae9d3c5f76f48c5acd604add55e65da09a8583e23809c30b15c677153e51c.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/5debf5b4f1df8cc9825e00f281ec6f84773f29a994523e0518603e02fa29dbc3.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/621be9c2860d651396ed025ce1416d9221bb7fc631f3cc494513c355916bf819.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/6463caead27d2bd16779ac67fa20385911e99851dfadffdae72461e01a7e0026.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/69b1adb261a223dfd778126b3036ac85711ba76a063b2a2945cd217245ec4a4d.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/6d3d4603cef733084309989b5e0ea4fa9d655055a1131e8005623d9084c3ee3b.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/6d9918731029e8d7b36d3afa624b0f0632289d2ae5fc7e1420e832ee75ea88af.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/73852d556f8d1284e1f9e18d69999b41915c59dc39700886f9af7311e1a32c5a.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/7c092fd8f6dbe4c58e74ece9787dac5357bc0e72c9539f011ea477d97a89943e.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/7c1633057129727bfffc906aed03f26dacf171a4dc3b793c1bf66c978cc8bb32.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/7cdc24dbb28c7fea151e25dc96748428599d0a158b85d5f2371e624cfd4b55fe.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/80e2d3f714a28b7ec991a9e6797456dfb22433ce70a1199253239201a56000db.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/824f7f4827d4a8e0b4c68a1bad1627da7f64592341b63bbb2878f2c960c064c2.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/899bf509271f256622693e435b36d652ed82419299040baa733ac16c28333de2.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/90b1db4d20bb0dbfc108eea3f9201621c3028741b452cdfd14a803234f900bc4.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/9361542ff7f391e96713bda3f8ad0cae7e97d58f67d94c502bde7c237b16bdc5.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/ace65c0e312c6b773023f677b76c481ca2ee65dee8f07bb588c1461bf33ec2f0.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/b07387211a22eac8f82c12f810f32e28b54c6b205448ac233e4502647493e088.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/b5ee1520c5f431bdd047b1b02778d7c517b837e91385e14b34e993edbe02266e.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/bffa359dce2a2f591d9d48a28800a199030d68450e2b2ab09f443a2b041d4917.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/cbfa775addcfd4260dfd77a6b5e62b6dbee11672498ccf2e8f12bd38d48898a2.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/d74327e7a606032f41eb6f554521a64806caa5990ee0953b44ee47cc17f153e9.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/d842850574ffbf3cd17e2f7c0b0a8cde6496e624e1f2f2f76a796857f8f1b003.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/dca18df420ed91f5ca0c8d8aa1d881660a3c62c4c6526a627d193bc89f260233.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/f4fd7c362ff704ae8d694b609cafd8a8eea711b20d8f1f5b8e42f0d207745f60.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/f65292cdb2dff6b691c44c222cc3b81f32b44186d82e6c66f5b12a0a19fade80.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/babel-loader/f88b936a86b218b4e77efc534ae7b26742e97b2388daa46261d07a370f72ec52.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/12.pack_" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/13.pack" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/14.pack" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/15.pack" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/.prettierrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/env.example" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/eslint.config.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/firebase-messaging-sw.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/nest-cli.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/serviceAccountKey.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/app.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/app.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/app.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/appconfig/appconfig.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/attendance/attendance.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/attendance/attendance.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/attendance/attendance.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/attendance/dto/create-attendance.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/attendance/dto/update-attendance.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/attendance/entities/attendance.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/auth/auth.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/auth/auth.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/auth/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/auth/dto/login.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/auth/dto/register.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/comment.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/comment.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/comment.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/dto/create-comment.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/dto/update-comment.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/entities/comment-file.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/comment/entities/comment.entity.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/studygroup/src/common/studyinvite.enum.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/studygroup/src/firebase/firebase.module.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/studygroup/src/firebase/firebase.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/dto/create-post.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/dto/create-session-goals.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/dto/create-studysession.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/dto/update-post.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/dto/update-session-goals.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/entities/post.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/entities/session-goals.entity.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/studygroup/src/post/entities/studyinvites.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/entities/studysession.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/post.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/post.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/post/post.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/requestform/dto/create-requestform.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/requestform/dto/update-requestform.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/requestform/entities/requestform.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/requestform/requestform.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/requestform/requestform.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/requestform/requestform.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/upload/upload.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/upload/upload.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/upload/upload.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/user/dto/create-user.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/user/dto/update-user.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/user/entities/user.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/user/user.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/user/user.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/src/user/user.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/test/app.e2e-spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/test/jest-e2e.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/tsconfig.build.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/0b1f0151c955fa3ff4a5370eb1ffb873" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/4645fd4235506fc479477c1c44870e8c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/4e8a855d35fc05b31f21ea952772f260" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/5f68f0e072ace148e9e20d81251176be" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/8f4b4899993921c7a78116be15c9f73e" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/f6423af39c4fae51a24aac6dcd1edf44" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/f93ece83edde0c4facede8083204551c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/studygroup/uploads/fb42f40997e80b2c33aff8a5233b31c0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/.eslintcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/0.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/0.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/1.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/1.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/10.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/10.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/11.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/11.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/12.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/12.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/2.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/2.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/3.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/3.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/4.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/4.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/5.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/5.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/6.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/6.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/7.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/7.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/8.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/8.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/9.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/9.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack.old" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack.old" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup-frontend/src/components/StudySessions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/src/components/StudySessions.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup/requestform.html" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup/requestform.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup/src/common/common.entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup/src/common/common.entity.ts" afterDir="false" />
@@ -103,7 +243,7 @@
       <workItem from="1754386688615" duration="1401000" />
       <workItem from="1754388123180" duration="71150000" />
       <workItem from="1755234799951" duration="29375000" />
-      <workItem from="1755338019865" duration="20259000" />
+      <workItem from="1755338019865" duration="20707000" />
     </task>
     <servers />
   </component>
