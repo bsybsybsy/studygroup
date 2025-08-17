@@ -11,24 +11,7 @@
       <change afterPath="$PROJECT_DIR$/studygroup/src/post/entities/studyinvites.entity.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/.eslintcache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/0.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/0.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/1.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/1.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/11.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/11.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/2.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/2.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/3.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/3.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/4.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/4.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/5.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/5.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/6.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/6.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/7.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/7.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/8.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/8.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/9.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/9.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack.old" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/node_modules/.cache/default-development/index.pack.old" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/src/components/MyCreatedStudies.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/src/components/MyCreatedStudies.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup-frontend/src/components/StudySessions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/src/components/StudySessions.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/src/pages/StudyDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/src/pages/StudyDetail.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studygroup-frontend/src/utils/dataTransform.ts" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup-frontend/src/utils/dataTransform.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup/requestform.html" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup/requestform.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup/src/common/common.entity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup/src/common/common.entity.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/studygroup/src/common/decorators/role.decorator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/studygroup/src/common/decorators/role.decorator.ts" afterDir="false" />
@@ -120,7 +103,7 @@
       <workItem from="1754386688615" duration="1401000" />
       <workItem from="1754388123180" duration="71150000" />
       <workItem from="1755234799951" duration="29375000" />
-      <workItem from="1755338019865" duration="1277000" />
+      <workItem from="1755338019865" duration="20259000" />
     </task>
     <servers />
   </component>
@@ -149,6 +132,12 @@
           <url>file://$PROJECT_DIR$/studygroup/src/post/post.service.ts</url>
           <line>228</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/studygroup/src/post/post.service.ts</url>
+          <line>1541</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

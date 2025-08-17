@@ -155,9 +155,14 @@ const StudySessions: React.FC = () => {
     console.log('🔍 addNewProof - newProofUrl:', newProofUrl);
     console.log('🔍 addNewProof - newProofFileName:', newProofFileName);
     
+    const updatedProofofToday = [...(goalsData.proofofToday || []), newProof];
+    console.log('🔍 addNewProof - 기존 proofofToday:', goalsData.proofofToday);
+    console.log('🔍 addNewProof - 새로운 proof:', newProof);
+    console.log('🔍 addNewProof - 업데이트된 proofofToday:', updatedProofofToday);
+    
     setGoalsData({
       ...goalsData,
-      proofofToday: [...goalsData.proofofToday, newProof]
+      proofofToday: updatedProofofToday
     });
     
     // 입력 필드 초기화 (파일은 유지)
@@ -609,12 +614,62 @@ const StudySessions: React.FC = () => {
     }
   };
 
-  const handleOpenGoalsModal = (session: StudySession) => {
+  const handleOpenGoalsModal = async (session: StudySession) => {
     setEditingSessionForGoals(session);
-    setGoalsData({
-      goalofToday: '',
-      proofofToday: []
-    });
+    
+    try {
+      // 현재 사용자가 해당 세션에 작성한 목표가 있는지 확인
+      const response = await postAPI.getSessionGoals(session.id);
+      const allGoals = response.data?.data || response.data || [];
+      
+      // 현재 사용자의 목표 찾기
+      const userGoal = allGoals.find((goal: any) => goal.user?.id === user?.id);
+      
+      if (userGoal) {
+        // 기존 목표가 있으면 불러오기
+        console.log('🔥 기존 목표 발견:', userGoal);
+        console.log('🔥 userGoal.proofofToday:', userGoal.proofofToday);
+        console.log('🔥 userGoal.proofofToday 타입:', typeof userGoal.proofofToday);
+        console.log('🔥 userGoal.proofofToday isArray:', Array.isArray(userGoal.proofofToday));
+        console.log('🔥 userGoal.proofofToday 길이:', userGoal.proofofToday?.length);
+        
+        // proofofToday가 문자열인 경우 JSON으로 파싱
+        let safeProofofToday = [];
+        if (typeof userGoal.proofofToday === 'string') {
+          try {
+            safeProofofToday = JSON.parse(userGoal.proofofToday);
+            console.log('🔥 JSON 파싱된 proofofToday:', safeProofofToday);
+          } catch (error) {
+            console.error('🔥 JSON 파싱 실패:', error);
+            safeProofofToday = [];
+          }
+        } else if (Array.isArray(userGoal.proofofToday)) {
+          safeProofofToday = userGoal.proofofToday;
+        }
+        
+        console.log('🔥 최종 안전한 proofofToday:', safeProofofToday);
+        
+        setGoalsData({
+          goalofToday: userGoal.goalofToday || '',
+          proofofToday: safeProofofToday
+        });
+      } else {
+        // 기존 목표가 없으면 빈 폼
+        console.log('🔥 기존 목표 없음 - 새로 작성');
+        setGoalsData({
+          goalofToday: '',
+          proofofToday: []
+        });
+      }
+    } catch (error) {
+      console.error('🔥 목표 조회 실패:', error);
+      // 에러가 발생해도 빈 폼으로 시작
+      setGoalsData({
+        goalofToday: '',
+        proofofToday: []
+      });
+    }
+    
     setShowGoalsModal(true);
   };
 
@@ -682,7 +737,7 @@ const StudySessions: React.FC = () => {
     }
   };
 
-  // 기존 목표 업데이트 전용 함수
+  // 목표와 한일 작성 및 수정 함수 (통합)
   const handleUpdateExistingGoal = async () => {
     console.log('🔥 handleUpdateExistingGoal 함수 시작!');
     console.log('🔥 editingSessionForGoals:', editingSessionForGoals);
@@ -693,7 +748,7 @@ const StudySessions: React.FC = () => {
       return;
     }
     
-    console.log('🔥 업데이트 시작 - setUpdatingGoals(true)');
+    console.log('🔥 처리 시작 - setUpdatingGoals(true)');
     setUpdatingGoals(true);
     
     try {
@@ -701,21 +756,70 @@ const StudySessions: React.FC = () => {
       console.log('🔥 전송할 데이터:', goalsData);
       console.log('🔥 세션 ID:', editingSessionForGoals.id);
       
-              // 파일이 포함된 proofofToday가 있는지 확인
-        console.log('🔥 goalsData.proofofToday:', goalsData.proofofToday);
-        console.log('🔥 goalsData.proofofToday 상세:', JSON.stringify(goalsData.proofofToday, null, 2));
-        console.log('🔥 selectedFiles:', selectedFiles);
-        console.log('🔥 selectedFiles.length:', selectedFiles.length);
-        
-        const hasFiles = goalsData.proofofToday.some(item => item.type === 'file' && selectedFiles.length > 0);
-        console.log('🔥 파일 포함 여부:', hasFiles);
-        
-        // 각 항목의 type 확인
-        goalsData.proofofToday.forEach((item, index) => {
-          console.log(`🔥 항목 ${index}:`, item.type, item.content);
-        });
+      // 파일이 포함된 proofofToday가 있는지 확인
+      console.log('🔥 goalsData.proofofToday:', goalsData.proofofToday);
+      console.log('🔥 goalsData.proofofToday 상세:', JSON.stringify(goalsData.proofofToday, null, 2));
+      console.log('🔥 selectedFiles:', selectedFiles);
+      console.log('🔥 selectedFiles.length:', selectedFiles.length);
       
-      if (hasFiles) {
+      // proofofToday가 배열인지 확인하고 안전하게 처리
+      const proofofTodayArray = Array.isArray(goalsData.proofofToday) ? goalsData.proofofToday : [];
+      
+      const hasFiles = proofofTodayArray.some(item => item.type === 'file' && selectedFiles.length > 0);
+      console.log('🔥 파일 포함 여부:', hasFiles);
+      
+      // 각 항목의 type 확인
+      proofofTodayArray.forEach((item, index) => {
+        console.log(`🔥 항목 ${index}:`, item.type, item.content);
+      });
+      
+      console.log('🔥 🔥 🔥 조건 확인 시작 🔥 🔥 🔥');
+      console.log('🔥 goalsData.goalofToday:', goalsData.goalofToday);
+      console.log('🔥 goalsData.proofofToday:', goalsData.proofofToday);
+      console.log('🔥 proofofToday 길이:', goalsData.proofofToday?.length);
+      console.log('🔥 hasFiles:', hasFiles);
+      console.log('🔥 goalofToday만 업데이트 조건:', goalsData.goalofToday && (!goalsData.proofofToday || goalsData.proofofToday.length === 0));
+      console.log('🔥 🔥 🔥 조건 확인 완료 🔥 🔥 🔥');
+      console.log('🔥 🔥 🔥 다음 단계로 진행 🔥 🔥 🔥');
+      console.log('🔥 🔥 🔥 조건 분기 시작 🔥 🔥 🔥');
+      console.log('🔥 🔥 🔥 첫 번째 조건 확인 🔥 🔥 🔥');
+      console.log('🔥 goalsData.goalofToday 존재:', !!goalsData.goalofToday);
+      console.log('🔥 goalsData.proofofToday 존재:', !!goalsData.proofofToday);
+      console.log('🔥 goalsData.proofofToday 길이:', goalsData.proofofToday?.length);
+      console.log('🔥 첫 번째 조건 결과:', goalsData.goalofToday && (!goalsData.proofofToday || goalsData.proofofToday.length === 0));
+      console.log('🔥 🔥 🔥 첫 번째 조건 확인 완료 🔥 🔥 🔥');
+      
+      // goalofToday만 업데이트하는 경우 - updateExistingSessionGoals 사용 (파일 처리 로직 없음)
+      if (goalsData.goalofToday && (!goalsData.proofofToday || goalsData.proofofToday.length === 0)) {
+        console.log('🔥 🔥 🔥 goalofToday만 업데이트 - updateExistingSessionGoals 사용 🔥 🔥 🔥');
+        
+        const dataToSend = {
+          goalofToday: goalsData.goalofToday,
+          proofofToday: goalsData.proofofToday || []
+        };
+
+        console.log('🔥 전송할 데이터:', dataToSend);
+        console.log('🔥 API 호출 전 - updateExistingSessionGoals 사용 (JSON)');
+        console.log('🔥 요청 URL:', `/post/sessions/${editingSessionForGoals.id}/goals/${user?.id}`);
+        console.log('🔥 postAPI.updateExistingSessionGoals 함수 호출 시작');
+
+        console.log('🔥 user 객체:', user);
+        console.log('🔥 user?.id:', user?.id);
+        console.log('🔥 전송할 userId:', user?.id || 0);
+        
+        if (!user?.id) {
+          console.error('🔥 user.id가 없습니다! API 호출을 중단합니다.');
+          alert('사용자 정보를 찾을 수 없습니다. 다시 시도해주세요.');
+          return;
+        }
+        
+        const result = await postAPI.updateExistingSessionGoals(
+          editingSessionForGoals.id,
+          user.id,
+          dataToSend
+        );
+        console.log('🔥 updateExistingSessionGoals 결과:', result);
+      } else if (hasFiles) {
         console.log('🔥 파일 업로드 모드 - FormData 사용');
         // 파일 업로드가 필요한 경우 FormData 사용
         const formData = new FormData();
@@ -738,26 +842,47 @@ const StudySessions: React.FC = () => {
         
         formData.append('proofofToday', JSON.stringify(proofData));
         console.log('🔥 FormData로 전송할 데이터:', formData);
-        console.log('🔥 FormData 내용:');
-        formData.forEach((value, key) => {
-          console.log(`  ${key}:`, value);
-        });
+                      console.log('🔥 FormData 내용:');
+              formData.forEach((value, key) => {
+                if (value instanceof Blob) {
+                  console.log(`  ${key}: Blob {size: ${value.size}, type: "${value.type}"}`);
+                } else {
+                  console.log(`  ${key}:`, value);
+                }
+              });
         
         // 파일들을 FormData에 추가
+        console.log('🔥 파일 추가 시작');
+        console.log('🔥 goalsData.proofofToday:', goalsData.proofofToday);
+        console.log('🔥 selectedFiles:', selectedFiles);
+        console.log('🔥 selectedFiles.length:', selectedFiles.length);
+        
         if (Array.isArray(goalsData.proofofToday)) {
           let fileIndex = 0;
           goalsData.proofofToday.forEach((item, index) => {
+            console.log(`🔥 proofofToday 항목 ${index}:`, item);
             if (typeof item.type === 'string' && item.type === 'file') {
+              console.log(`🔥 파일 타입 발견 - index ${index}`);
               // 파일 타입인 경우 selectedFiles에서 파일 찾기
               const file = selectedFiles[fileIndex];
+              console.log(`🔥 selectedFiles[${fileIndex}]:`, file);
               if (file) {
                 console.log(`🔥 파일 ${fileIndex} 추가:`, file.name, file.size, file.type);
                 formData.append(`file`, file);
                 fileIndex++;
+              } else {
+                console.log(`🔥 selectedFiles[${fileIndex}]가 없음!`);
               }
             }
           });
         }
+        
+        console.log('🔥 FormData에 추가된 파일들:');
+        formData.forEach((value, key) => {
+          if (value instanceof File) {
+            console.log(`  ${key}:`, value.name, value.size, value.type);
+          }
+        });
         
         console.log('🔥 FormData API 호출 시작');
         console.log('🔥 FormData 전송 전 최종 확인:');
@@ -769,40 +894,148 @@ const StudySessions: React.FC = () => {
           }
         });
         
-        const result = await postAPI.updateExistingSessionGoals(
+        // createOrUpdateSessionGoals 사용 (통합)
+        const result = await postAPI.createOrUpdateSessionGoals(
           editingSessionForGoals.id, 
-          user!.id, 
           formData
         );
         console.log('🔥 FormData API 호출 결과:', result);
+        
+        // 파일 업로드 후 proofofToday의 url을 서버 URL로 업데이트
+        console.log('🔥 API 응답 전체 구조:', result);
+        console.log('🔥 result.data:', result.data);
+        console.log('🔥 result.data.data:', result.data?.data);
+        console.log('🔥 result.data.data.proofofToday:', result.data?.data?.proofofToday);
+        
+        if (result.data?.data?.proofofToday && Array.isArray(result.data.data.proofofToday)) {
+          console.log('🔥 파일 업로드 후 proofofToday 처리 시작:', result.data.data.proofofToday);
+          
+          const updatedProofofToday = result.data.data.proofofToday.map((proof: any, index: number) => {
+            console.log(`🔥 proof ${index} 처리:`, proof);
+            console.log(`🔥 proof ${index} - type:`, proof.type);
+            console.log(`🔥 proof ${index} - serverFileName:`, proof.serverFileName);
+            
+            if (proof.type === 'file' && proof.serverFileName) {
+              console.log(`🔥 파일 proof ${index} 처리 완료:`, proof);
+              return {
+                ...proof,
+                url: `/api/upload/files/${proof.serverFileName}`
+              };
+            }
+            return proof;
+          });
+          
+          console.log('🔥 업데이트된 proofofToday:', updatedProofofToday);
+          
+          // goalsData 상태 업데이트
+          setGoalsData({
+            ...goalsData,
+            proofofToday: updatedProofofToday
+          });
+        } else {
+          console.log('🔥 proofofToday가 배열이 아니거나 없음:', result.data?.data?.proofofToday);
+          console.log('🔥 proofofToday 타입:', typeof result.data?.data?.proofofToday);
+          console.log('🔥 proofofToday가 배열인가?', Array.isArray(result.data?.data?.proofofToday));
+        }
       } else {
         console.log('🔥 일반 모드 - JSON 데이터 전송');
-        // API 호출 - 새로운 전용 Update 함수 사용
-        console.log('🔥 updateExistingSessionGoals API 호출 시작');
-        const result = await postAPI.updateExistingSessionGoals(
-          editingSessionForGoals.id, 
-          user!.id, 
-          goalsData
-        );
-        console.log('🔥 API 호출 결과:', result);
+        
+                    // goalofToday만 업데이트하는 경우 - updateExistingSessionGoals 사용 (파일 처리 로직 없음)
+            if (goalsData.goalofToday && (!goalsData.proofofToday || goalsData.proofofToday.length === 0)) {
+              console.log('🔥 goalofToday만 업데이트 - updateExistingSessionGoals 사용 (JSON)');
+
+              const dataToSend = {
+                goalofToday: goalsData.goalofToday,
+                proofofToday: goalsData.proofofToday || []
+              };
+
+              console.log('🔥 전송할 데이터:', dataToSend);
+              console.log('🔥 API 호출 전 - updateExistingSessionGoals 사용 (JSON)');
+              console.log('🔥 요청 URL:', `/post/sessions/${editingSessionForGoals.id}/goals/${user?.id}`);
+              console.log('🔥 postAPI.updateExistingSessionGoals 함수 호출 시작');
+
+              const result = await postAPI.updateExistingSessionGoals(
+                editingSessionForGoals.id,
+                user?.id || 0,
+                dataToSend
+              );
+              console.log('🔥 updateExistingSessionGoals 결과:', result);
+            } else {
+              console.log('🔥 proofofToday 포함 - updateExistingSessionGoals 사용');
+
+              const formData = new FormData();
+              formData.append('goalofToday', goalsData.goalofToday || '');
+              formData.append('proofofToday', JSON.stringify(goalsData.proofofToday || []));
+              // 빈 파일 필드 추가 (FileInterceptor가 file을 찾을 수 있도록)
+              formData.append('file', new Blob([''], { type: 'text/plain' }), 'empty.txt');
+
+              console.log('🔥 전송할 FormData:', {
+                goalofToday: goalsData.goalofToday,
+                proofofToday: goalsData.proofofToday || []
+              });
+
+              console.log('🔥 API 호출 전 - updateExistingSessionGoals 사용');
+              console.log('🔥 요청 URL:', `/post/sessions/${editingSessionForGoals.id}/goals/${user?.id}`);
+              
+              const result = await postAPI.updateExistingSessionGoals(
+                editingSessionForGoals.id,
+                user?.id || 0,
+                formData
+              );
+              console.log('🔥 updateExistingSessionGoals 결과:', result);
+            }
       }
       
       console.log('🔥 API 호출 성공 - 모달 닫기');
       setShowGoalsModal(false);
       setEditingSessionForGoals(null);
-      alert('목표와 한일이 성공적으로 수정되었습니다!');
+      alert('목표와 한일이 성공적으로 처리되었습니다!');
       
-      // 목표 목록 새로고침
-      if (selectedSessionForGoals) {
-        const response = await postAPI.getSessionGoals(selectedSessionForGoals.id);
-        setSessionGoals(response.data?.data || response.data || []);
-      }
+              // 목표 목록 새로고침
+        if (selectedSessionForGoals) {
+          console.log('🔥 목표 저장 후 새로고침 시작');
+          const response = await postAPI.getSessionGoals(selectedSessionForGoals.id);
+          let refreshedGoals = response.data?.data || response.data || [];
+          console.log('🔥 새로고침된 goals:', refreshedGoals);
+          
+          // 각 goal의 proofofToday에서 파일 타입인 경우 serverFileName으로 url 업데이트
+          refreshedGoals = refreshedGoals.map((goal: any) => {
+            if (goal.proofofToday && Array.isArray(goal.proofofToday)) {
+              const updatedProofofToday = goal.proofofToday.map((proof: any) => {
+                if (proof.type === 'file' && proof.serverFileName) {
+                  console.log(`🔥 새로고침 - 파일 proof 업데이트:`, proof);
+                  return {
+                    ...proof,
+                    url: `/api/upload/files/${proof.serverFileName}`
+                  };
+                }
+                return proof;
+              });
+              
+              return {
+                ...goal,
+                proofofToday: updatedProofofToday
+              };
+            }
+            return goal;
+          });
+          
+          console.log('🔥 URL 업데이트 후 goals:', refreshedGoals);
+          
+          // 각 goal의 proofofToday 확인
+          refreshedGoals.forEach((goal: any, index: number) => {
+            console.log(`🔥 Goal ${index} - proofofToday:`, goal.proofofToday);
+            console.log(`🔥 Goal ${index} - 전체 데이터:`, goal);
+          });
+          
+          setSessionGoals(refreshedGoals);
+        }
       
     } catch (error) {
       console.error('🔥 API 호출 실패:', error);
-      alert('목표와 한일 수정에 실패했습니다.');
+      alert('목표와 한일 처리에 실패했습니다.');
     } finally {
-      console.log('🔥 업데이트 완료 - setUpdatingGoals(false)');
+      console.log('🔥 처리 완료 - setUpdatingGoals(false)');
       setUpdatingGoals(false);
     }
   };
@@ -1078,9 +1311,67 @@ const StudySessions: React.FC = () => {
 
   const handleShowGoalsTable = async (session: StudySession) => {
     setSelectedSessionForGoals(session);
+    
+    // 먼저 현재 sessionGoals에 데이터가 있는지 확인
+    if (sessionGoals && sessionGoals.length > 0) {
+      console.log('🔥 목표 테이블 - 기존 sessionGoals 사용:', sessionGoals);
+      setShowGoalsTable(true);
+      return;
+    }
+    
     try {
+      console.log('🔥 API 호출 시작 - sessionId:', session.id);
       const response = await postAPI.getSessionGoals(typeof session.id === 'number' ? session.id : 0);
-      setSessionGoals(response.data?.data || response.data || []);
+      
+      console.log('🔥 API 응답 전체:', response);
+      console.log('🔥 API 응답 data:', response.data);
+      console.log('🔥 API 응답 data.data:', response.data?.data);
+      
+      let goals = response.data?.data || response.data || [];
+      console.log('🔥 파싱 전 goals:', goals);
+      
+      // goals가 배열인지 확인
+      console.log('🔥 goals 타입:', typeof goals);
+      console.log('🔥 goals가 배열인가?', Array.isArray(goals));
+      console.log('🔥 goals 길이:', goals?.length);
+      
+      // proofofToday가 문자열인 경우 JSON으로 파싱
+      goals = goals.map((goal: any, index: number) => {
+        console.log(`🔥 Goal ${index} - 원본 데이터:`, goal);
+        console.log(`🔥 Goal ${index} - proofofToday:`, goal.proofofToday);
+        console.log(`🔥 Goal ${index} - proofofToday 타입:`, typeof goal.proofofToday);
+        
+        if (goal.proofofToday && typeof goal.proofofToday === 'string') {
+          try {
+            goal.proofofToday = JSON.parse(goal.proofofToday);
+            console.log(`🔥 Goal ${index} - JSON 파싱된 proofofToday:`, goal.proofofToday);
+          } catch (error) {
+            console.error(`🔥 Goal ${index} - JSON 파싱 실패:`, error);
+            goal.proofofToday = [];
+          }
+        }
+        
+        // proofofToday가 빈 배열인 경우 추가 확인
+        if (Array.isArray(goal.proofofToday) && goal.proofofToday.length === 0) {
+          console.log(`🔥 Goal ${index} - proofofToday가 빈 배열입니다. 전체 필드 확인:`, Object.keys(goal));
+          
+          // goal 객체의 모든 필드 값 확인
+          Object.entries(goal).forEach(([key, value]) => {
+            console.log(`🔥 Goal ${index} - ${key}:`, value);
+          });
+          
+          // goal 객체에 다른 필드로 proofofToday 데이터가 저장되어 있는지 확인
+          if (goal.proofofTodayText || goal.proofofTodayContent || goal.proofofTodayData) {
+            console.log(`🔥 Goal ${index} - 다른 필드에서 proofofToday 데이터 발견!`);
+            goal.proofofToday = goal.proofofTodayText || goal.proofofTodayContent || goal.proofofTodayData;
+          }
+        }
+        
+        return goal;
+      });
+      
+      console.log('🔥 목표 테이블 - 최종 처리된 goals:', goals);
+      setSessionGoals(goals);
       setShowGoalsTable(true);
     } catch (error) {
       console.error('Failed to fetch session goals:', error);
@@ -1150,9 +1441,10 @@ const StudySessions: React.FC = () => {
          </div>
        )}
 
-                       {/* 초대장 전송 섹션 */}
+                       {/* 초대장 전송 섹션 - 리더만 볼 수 있음 */}
         {(post?.studyStatus === 'in-process') && 
-         (post?.studyMembers && post.studyMembers.length > 0) && (
+         (post?.studyMembers && post.studyMembers.length > 0) && 
+         isUserLeader() && (
          <div className="mb-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-6">
            <div className="flex items-center justify-between">
              <div className="flex items-center">
@@ -1676,7 +1968,7 @@ const StudySessions: React.FC = () => {
                 className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
                 disabled={updatingGoals}
               >
-                {updatingGoals ? '업데이트 중...' : (goalsData.goalofToday || goalsData.proofofToday.length > 0 ? '수정하기' : '저장하기')}
+                {updatingGoals ? '처리 중...' : '작성 및 수정'}
               </button>
             </div>
           </div>
@@ -1743,92 +2035,100 @@ const StudySessions: React.FC = () => {
                           )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 border-b border-gray-200">
-                          {goal.proofofToday && goal.proofofToday.length > 0 ? (
-                            <div className="max-w-xs">
-                              <div className="text-green-700 font-medium mb-2">한일 ({goal.proofofToday.length}개)</div>
-                              <div className="space-y-2">
-                                {goal.proofofToday.map((item, index) => (
-                                  <div key={index} className="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-500">
-                                    <div className="flex items-center mb-1">
-                                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">
-                                        {item.type === 'text' ? '📝 텍스트' : 
-                                         item.type === 'link' ? '🔗 링크' : 
-                                         item.type === 'image' ? '🖼️ 이미지' : 
-                                         item.type === 'file' ? '📎 파일' : '📄 기타'}
-                                      </span>
-                                    </div>
-                                    <div className="text-gray-800">
-                                      {item.type === 'text' ? (
-                                        <div className="whitespace-pre-wrap">{item.content}</div>
-                                      ) : item.type === 'link' ? (
-                                        <div>
-                                          <div className="font-medium mb-1">{item.content}</div>
-                                          <a 
-                                            href={item.url} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
-                                            className="text-blue-600 hover:underline text-sm break-all"
-                                          >
-                                            {item.url}
-                                          </a>
+                          {/* 디버깅 정보 추가 */}
+                          {(() => {
+                            console.log('🔥 렌더링 - goal.proofofToday:', goal.proofofToday);
+                            console.log('🔥 렌더링 - typeof:', typeof goal.proofofToday);
+                            console.log('🔥 렌더링 - Array.isArray:', Array.isArray(goal.proofofToday));
+                            console.log('🔥 렌더링 - length:', goal.proofofToday?.length);
+                            
+                            if (goal.proofofToday && Array.isArray(goal.proofofToday) && goal.proofofToday.length > 0) {
+                              console.log('🔥 렌더링 - 조건 통과! 한일 표시');
+                              return (
+                                <div className="max-w-xs">
+                                  <div className="text-green-700 font-medium mb-2">한일 ({goal.proofofToday.length}개)</div>
+                                  <div className="space-y-2">
+                                    {goal.proofofToday.map((item, index) => (
+                                      <div key={index} className="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-500">
+                                        <div className="flex items-center mb-1">
+                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">
+                                            {item.type === 'text' ? '📝 텍스트' : 
+                                             item.type === 'link' ? '🔗 링크' : 
+                                             item.type === 'image' ? '🖼️ 이미지' : 
+                                             item.type === 'file' ? '📎 파일' : '📄 기타'}
+                                          </span>
                                         </div>
-                                      ) : item.type === 'image' ? (
-                                        <div>
-                                          <div className="font-medium mb-2">{item.content}</div>
-                                          <img 
-                                            src={item.url} 
-                                            alt={item.content} 
-                                            className="max-w-full max-h-32 object-contain rounded border"
-                                            onError={(e) => {
-                                              e.currentTarget.style.display = 'none';
-                                              e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                                            }}
-                                          />
-                                          <div className="hidden text-red-500 text-xs mt-1">이미지를 불러올 수 없습니다</div>
-                                        </div>
-                                      ) : item.type === 'file' ? (
-                                        <div>
-                                          <div className="font-medium mb-1">{item.content}</div>
-                                          {/* 디버깅 정보 */}
-                                          <div className="text-xs text-gray-500 mb-2">
-                                            Debug: serverFileName={item.serverFileName || '없음'}, 
-                                            url={item.url || '없음'}, 
-                                            isBlob={item.url?.startsWith('blob:') ? 'true' : 'false'}
-                                          </div>
-                                          {item.serverFileName || (item.url && !item.url.startsWith('blob:')) ? (
-                                            <button
-                                              onClick={() => handleFileDownload(item)}
-                                              className="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                                            >
-                                              📎 {item.fileName || '파일 다운로드'}
-                                            </button>
+                                        <div className="text-gray-800">
+                                          {item.type === 'text' ? (
+                                            <div className="whitespace-pre-wrap">{item.content}</div>
+                                          ) : item.type === 'link' ? (
+                                            <div>
+                                              <div className="font-medium mb-1">{item.content}</div>
+                                              <a 
+                                                href={item.url} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="text-blue-600 hover:underline text-sm break-all"
+                                              >
+                                                {item.url}
+                                              </a>
+                                            </div>
+                                          ) : item.type === 'image' ? (
+                                            <div>
+                                              <div className="font-medium mb-2">{item.content}</div>
+                                              <img 
+                                                src={item.url} 
+                                                alt={item.content} 
+                                                className="max-w-full max-h-32 object-contain rounded border"
+                                                onError={(e) => {
+                                                  e.currentTarget.style.display = 'none';
+                                                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                                }}
+                                              />
+                                              <div className="hidden text-red-500 text-xs mt-1">이미지를 불러올 수 없습니다</div>
+                                            </div>
+                                          ) : item.type === 'file' ? (
+                                            <div>
+                                              <div className="font-medium mb-1">{item.content}</div>
+
+                                              
+                                              {item.serverFileName ? (
+                                                <button
+                                                  onClick={() => handleFileDownload(item)}
+                                                  className="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                                                >
+                                                  📎 {item.fileName || '파일 다운로드'}
+                                                </button>
+                                              ) : (
+                                                <div className="inline-flex items-center px-3 py-1 bg-gray-400 text-white text-sm rounded cursor-not-allowed">
+                                                  📎 {item.fileName || '파일 다운로드'} (사용 불가)
+                                                </div>
+                                              )}
+                                              {item.fileSize && (
+                                                <div className="text-xs text-gray-500 mt-1">
+                                                  크기: {(item.fileSize / 1024).toFixed(1)}KB
+                                                </div>
+                                              )}
+                                              {item.url && item.url.startsWith('blob:') && (
+                                                <div className="text-xs text-red-500 mt-1">
+                                                  ⚠️ 이 파일은 다운로드할 수 없습니다. 새로 업로드해주세요.
+                                                </div>
+                                              )}
+                                            </div>
                                           ) : (
-                                            <div className="inline-flex items-center px-3 py-1 bg-gray-400 text-white text-sm rounded cursor-not-allowed">
-                                              📎 {item.fileName || '파일 다운로드'} (사용 불가)
-                                            </div>
-                                          )}
-                                          {item.fileSize && (
-                                            <div className="text-xs text-gray-500 mt-1">
-                                              크기: {(item.fileSize / 1024).toFixed(1)}KB
-                                            </div>
-                                          )}
-                                          {item.url && item.url.startsWith('blob:') && (
-                                            <div className="text-xs text-red-500 mt-1">
-                                              ⚠️ 이 파일은 다운로드할 수 없습니다. 새로 업로드해주세요.
-                                            </div>
+                                            <div>{item.content}</div>
                                           )}
                                         </div>
-                                      ) : (
-                                        <div>{item.content}</div>
-                                      )}
-                                    </div>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-gray-400">작성하지 않음</span>
-                          )}
+                                </div>
+                              );
+                            } else {
+                              console.log('🔥 렌더링 - 조건 실패! 작성하지 않음 표시');
+                              return <span className="text-gray-400">작성하지 않음</span>;
+                            }
+                          })()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-b border-gray-200">
                           {new Date(goal.updatedAt).toLocaleDateString()}
